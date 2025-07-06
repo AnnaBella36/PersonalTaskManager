@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TaskTableViewCell: UITableViewCell{
+final class TaskTableViewCell: UITableViewCell{
     
     static let reuseID = "TaskCell"
     
@@ -26,7 +26,7 @@ class TaskTableViewCell: UITableViewCell{
         return label
     }()
     
-    func configure(with task: Task) {
+    func configure(with task: TaskModel) {
         titleLabel.text = task.title
         subtitleLabel.text = "\(task.category.rawValue)  \(task.priority.rawValue)" 
         accessoryType = task.isCompleted ? .checkmark : .detailButton
