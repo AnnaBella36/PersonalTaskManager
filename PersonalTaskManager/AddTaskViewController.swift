@@ -8,15 +8,14 @@
 import UIKit
 
 protocol AddTaskDelegate: AnyObject{
-    func didAddTask(_ task: TaskModel)
-    func didEditTask(_ task: TaskModel, at index: Int)
+    func didSaveTask(_ task: TaskModel)
 }
 
 final class AddTaskViewController: UIViewController{
     
     weak var delegate: AddTaskDelegate?
     private let taskToEdit: TaskModel?
-    private let taskIndex: Int?
+   
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
@@ -47,9 +46,8 @@ final class AddTaskViewController: UIViewController{
         return button
     }()
     
-    init(taskToEdit: TaskModel? = nil, taskIndex: Int? = nil, delegate: AddTaskDelegate?){
+    init(taskToEdit: TaskModel? = nil, delegate: AddTaskDelegate?){
         self.taskToEdit = taskToEdit
-        self.taskIndex = taskIndex
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
@@ -83,14 +81,8 @@ final class AddTaskViewController: UIViewController{
         
         let selectedPriority = TaskPriority.allCases[priorityControl.selectedSegmentIndex]
         let selectedCategory = TaskCategory.allCases[categoryControl.selectedSegmentIndex]
-        
-        let task = TaskModel(title: title, isCompleted: taskToEdit?.isCompleted ?? false , priority: selectedPriority, category: selectedCategory)
-        
-        if let index = taskIndex{
-            delegate?.didEditTask(task, at: index)
-        }else{
-            delegate?.didAddTask(task)
-        }
+        let task = TaskModel(id: taskToEdit?.id ?? UUID(), title: title, isCompleted: taskToEdit?.isCompleted ?? false, priority: selectedPriority, category: selectedCategory)
+        delegate?.didSaveTask(task)
         navigationController?.popViewController(animated: true)
     }
     

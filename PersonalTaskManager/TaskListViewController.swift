@@ -10,9 +10,9 @@ import UIKit
 final class TaskListViewController:  UIViewController{
     
     private var tasks: [TaskModel] = [
-        TaskModel(title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
-        TaskModel(title: "Finish project", isCompleted: false, priority: .high, category: .work),
-        TaskModel(title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)
+        TaskModel(id: UUID(), title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
+        TaskModel(id: UUID(), title: "Finish project", isCompleted: false, priority: .high, category: .work),
+        TaskModel(id: UUID(), title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)
     ]
     
     
@@ -92,22 +92,19 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let editVC = AddTaskViewController(taskToEdit: tasks[indexPath.row], taskIndex: indexPath.row, delegate: self)
+        let editVC = AddTaskViewController(taskToEdit: tasks[indexPath.row], delegate: self)
         navigationController?.pushViewController(editVC, animated: true)
     }
 }
 
 
 extension TaskListViewController: AddTaskDelegate{
-    
-    func didAddTask(_ task: TaskModel) {
-        tasks.append(task)
+    func didSaveTask(_ task: TaskModel) {
+        if let index = tasks.firstIndex(where: {$0.id == task.id}){
+            tasks[index] = task
+        } else {
+            tasks.append(task)
+        }
         tableView.reloadData()
     }
-    
-    func didEditTask(_ task: TaskModel, at index: Int) {
-        tasks[index] = task
-        tableView.reloadData()
-    }
-    
 }
