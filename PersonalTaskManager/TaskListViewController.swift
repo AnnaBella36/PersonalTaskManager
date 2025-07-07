@@ -45,8 +45,7 @@ final class TaskListViewController:  UIViewController{
     }
     
     @objc private func addTaskTapped(){
-        let addVC = AddTaskViewController()
-        addVC.delegate = self
+        let addVC = AddTaskViewController(delegate: self)
         navigationController?.pushViewController(addVC, animated: true)
     }
 }
@@ -93,10 +92,7 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let editVC = AddTaskViewController()
-        editVC.taskToEdit = tasks[indexPath.row]
-        editVC.taskIndex = indexPath.row
-        editVC.delegate = self
+        let editVC = AddTaskViewController(taskToEdit: tasks[indexPath.row], taskIndex: indexPath.row, delegate: self)
         navigationController?.pushViewController(editVC, animated: true)
     }
 }

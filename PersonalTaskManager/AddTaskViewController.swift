@@ -15,8 +15,8 @@ protocol AddTaskDelegate: AnyObject{
 final class AddTaskViewController: UIViewController{
     
     weak var delegate: AddTaskDelegate?
-    var taskToEdit: TaskModel?
-    var taskIndex: Int?
+    private let taskToEdit: TaskModel?
+    private let taskIndex: Int?
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
@@ -47,6 +47,13 @@ final class AddTaskViewController: UIViewController{
         return button
     }()
     
+    init(taskToEdit: TaskModel? = nil, taskIndex: Int? = nil, delegate: AddTaskDelegate?){
+        self.taskToEdit = taskToEdit
+        self.taskIndex = taskIndex
+        self.delegate = delegate
+        super.init(nibName: nil, bundle: nil)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -86,6 +93,12 @@ final class AddTaskViewController: UIViewController{
         }
         navigationController?.popViewController(animated: true)
     }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
 
 extension AddTaskViewController{
