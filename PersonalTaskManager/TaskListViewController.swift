@@ -9,12 +9,8 @@ import UIKit
 
 final class TaskListViewController:  UIViewController{
     
-    private var tasks: [TaskModel] = [
-        TaskModel(id: UUID(), title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
-        TaskModel(id: UUID(), title: "Finish project", isCompleted: false, priority: .high, category: .work),
-        TaskModel(id: UUID(), title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)
-    ]
-    
+    private var tasks: [TaskModel] = TaskModel.demoTasks
+    private var completionState: [UUID: Bool] = [:]
     
     private let tableView: UITableView = {
         let table = UITableView()
@@ -70,15 +66,17 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.reuseID, for: indexPath) as? TaskTableViewCell else {
             return UITableViewCell()
         }
-        cell.configure(with: tasks[indexPath.row])
+        let task = tasks[indexPath.row]
+        let isCompleted = completionState[task.id] ?? task.isCompleted
+        cell.configure(with: tasks[indexPath.row], isCompleted: isCompleted)
         return cell
         
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var task = tasks[indexPath.row]
-        task.isCompleted.toggle()
-        tasks[indexPath.row] = task
+        let current = completionState[task.id] ?? task.isCompleted
+        completionState[task.id] = !current
         tableView.reloadRows(at: [indexPath], with: .automatic)
         
     }
@@ -86,7 +84,9 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            let id = tasks[indexPath.row].id
             tasks.remove(at: indexPath.row)
+            completionState.removeValue(forKey: id)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
