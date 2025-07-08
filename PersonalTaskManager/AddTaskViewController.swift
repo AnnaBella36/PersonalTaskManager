@@ -16,10 +16,17 @@ final class AddTaskViewController: UIViewController{
     weak var delegate: AddTaskDelegate?
     private let taskToEdit: TaskModel?
    
-    
     private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Enter a task title"
+        textField.borderStyle = .roundedRect
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
+    private let descriptionTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Description"
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -30,6 +37,7 @@ final class AddTaskViewController: UIViewController{
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
+    
     private let categoryControl: UISegmentedControl = {
         let control = UISegmentedControl(items: TaskCategory.allCases.map{$0.rawValue})
         control.translatesAutoresizingMaskIntoConstraints = false
@@ -39,6 +47,9 @@ final class AddTaskViewController: UIViewController{
     private let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
+        button.backgroundColor = .systemBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -73,6 +84,7 @@ final class AddTaskViewController: UIViewController{
     
     private func setupUI(){
         view.addSubview(titleTextField)
+        view.addSubview(descriptionTextField)
         view.addSubview(priorityControl)
         view.addSubview(categoryControl)
         view.addSubview(saveButton)
@@ -108,7 +120,11 @@ extension AddTaskViewController{
             titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
             titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
-            priorityControl.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
+            descriptionTextField.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
+            descriptionTextField.leadingAnchor.constraint(equalTo: titleTextField.leadingAnchor),
+            descriptionTextField.trailingAnchor.constraint(equalTo: titleTextField.trailingAnchor),
+            
+            priorityControl.topAnchor.constraint(equalTo: descriptionTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
             priorityControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
             priorityControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
