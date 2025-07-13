@@ -16,7 +16,6 @@ final class AddTaskViewController: UIViewController{
     weak var delegate: AddTaskDelegate?
     private let taskToEdit: TaskModel?
    
-    
     private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Enter a task title"
@@ -25,11 +24,22 @@ final class AddTaskViewController: UIViewController{
         return textField
     }()
     
+    private let descriptionTextField: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemGray4.cgColor
+        textView.layer.borderWidth = 1
+        textView.layer.cornerRadius = 6
+        textView.textContainer.lineBreakMode = .byTruncatingTail
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
+    }()
+    
     private let priorityControl: UISegmentedControl = {
         let control = UISegmentedControl(items: TaskPriority.allCases.map{$0.rawValue})
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
+    
     private let categoryControl: UISegmentedControl = {
         let control = UISegmentedControl(items: TaskCategory.allCases.map{$0.rawValue})
         control.translatesAutoresizingMaskIntoConstraints = false
@@ -39,6 +49,9 @@ final class AddTaskViewController: UIViewController{
     private let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
+        button.backgroundColor = .systemBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -63,6 +76,7 @@ final class AddTaskViewController: UIViewController{
         
         if let task = taskToEdit{
             titleTextField.text = task.title
+            descriptionTextField.text = task.description
             priorityControl.selectedSegmentIndex = TaskPriority.allCases.firstIndex(of: task.priority) ?? 1
             categoryControl.selectedSegmentIndex = TaskCategory.allCases.firstIndex(of: task.category) ?? 0
         } else {
@@ -73,9 +87,13 @@ final class AddTaskViewController: UIViewController{
     
     private func setupUI(){
         view.addSubview(titleTextField)
+        view.addSubview(descriptionTextField)
         view.addSubview(priorityControl)
         view.addSubview(categoryControl)
         view.addSubview(saveButton)
+        descriptionTextField.font = UIFont.systemFont(ofSize: 16)
+        descriptionTextField.textContainer.maximumNumberOfLines = 3
+        descriptionTextField.isScrollEnabled = true
         saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
     }
     
@@ -89,7 +107,15 @@ final class AddTaskViewController: UIViewController{
         
         let selectedPriority = TaskPriority.allCases[priorityControl.selectedSegmentIndex]
         let selectedCategory = TaskCategory.allCases[categoryControl.selectedSegmentIndex]
-        let task = TaskModel(id: taskToEdit?.id ?? UUID(), title: title, isCompleted: taskToEdit?.isCompleted ?? false, priority: selectedPriority, category: selectedCategory)
+        
+        let rawDescription = descriptionTextField.text ?? ""
+        let trimmedDescription = String(rawDescription.prefix(300))
+        let task = TaskModel(id: taskToEdit?.id ?? UUID(),
+                             title: title,
+                             description: trimmedDescription,
+                             isCompleted: taskToEdit?.isCompleted ?? false,
+                             priority: selectedPriority,
+                             category: selectedCategory)
         delegate?.didSaveTask(task)
         navigationController?.popViewController(animated: true)
     }
@@ -108,7 +134,12 @@ extension AddTaskViewController{
             titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
             titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
-            priorityControl.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
+            descriptionTextField.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
+            descriptionTextField.leadingAnchor.constraint(equalTo: titleTextField.leadingAnchor),
+            descriptionTextField.trailingAnchor.constraint(equalTo: titleTextField.trailingAnchor),
+            descriptionTextField.heightAnchor.constraint(equalToConstant: 70),
+            
+            priorityControl.topAnchor.constraint(equalTo: descriptionTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
             priorityControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
             priorityControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
@@ -117,7 +148,8 @@ extension AddTaskViewController{
             categoryControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
             saveButton.topAnchor.constraint(equalTo: categoryControl.bottomAnchor, constant: LayoutConstraints.bottomSpacing),
-            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            saveButton.widthAnchor.constraint(equalToConstant: 60)
         ])
     }
 }

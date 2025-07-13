@@ -27,8 +27,8 @@ final class EmptyStateView: UIView{
         NSLayoutConstraint.activate([
             messageLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             messageLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: LayoutConstraints.horizontalPadding),
+            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -LayoutConstraints.horizontalPadding)
         ])
     }
     
