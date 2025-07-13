@@ -10,13 +10,15 @@ import Foundation
 struct TaskModel: Hashable, Equatable {
     var id: UUID
     var title: String
+    var description: String
     var isCompleted: Bool
     var priority: TaskPriority
     var category: TaskCategory
     
-    init(id: UUID, title: String, isCompleted: Bool, priority: TaskPriority, category: TaskCategory) {
+    init(id: UUID, title: String, description: String = "", isCompleted: Bool, priority: TaskPriority, category: TaskCategory) {
         self.id = id
         self.title = title
+        self.description = description
         self.isCompleted = isCompleted
         self.priority = priority
         self.category = category
@@ -25,11 +27,9 @@ struct TaskModel: Hashable, Equatable {
 
 extension TaskModel{
     static var demoTasks: [TaskModel] {
-        [
-            TaskModel(id: UUID(), title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
-            TaskModel(id: UUID(), title: "Finish project", isCompleted: false, priority: .high, category: .work),
-            TaskModel(id: UUID(), title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)
-        ]
+        [TaskModel(id: UUID(), title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
+         TaskModel(id: UUID(), title: "Finish project", isCompleted: false, priority: .high, category: .work),
+         TaskModel(id: UUID(), title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)]
         
     }
 }
