@@ -26,10 +26,10 @@ final class TaskTableViewCell: UITableViewCell{
         return label
     }()
     
-    func configure(with task: TaskModel) {
+    func configure(with task: TaskModel, isCompleted: Bool) {
         titleLabel.text = task.title
         subtitleLabel.text = "\(task.category.rawValue)  \(task.priority.rawValue)" 
-        accessoryType = task.isCompleted ? .checkmark : .detailButton
+        accessoryType = isCompleted ? .checkmark : .detailButton
         
     }
     
