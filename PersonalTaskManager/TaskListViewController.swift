@@ -7,12 +7,12 @@
 
 import UIKit
 
-class TaskListViewController:  UIViewController{
+final class TaskListViewController:  UIViewController{
     
-    private var tasks: [Task] = [
-        Task(title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
-        Task(title: "Finish project", isCompleted: false, priority: .high, category: .work),
-        Task(title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)
+    private var tasks: [TaskModel] = [
+        TaskModel(title: "Buy milk", isCompleted: false, priority: .medium, category: .shopping),
+        TaskModel(title: "Finish project", isCompleted: false, priority: .high, category: .work),
+        TaskModel(title: "Walk with dogs", isCompleted: true, priority: .low, category: .personal)
     ]
     
     
@@ -104,12 +104,12 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
 
 extension TaskListViewController: AddTaskDelegate{
     
-    func didAddTask(_ task: Task) {
+    func didAddTask(_ task: TaskModel) {
         tasks.append(task)
         tableView.reloadData()
     }
     
-    func didEditTask(_ task: Task, at index: Int) {
+    func didEditTask(_ task: TaskModel, at index: Int) {
         tasks[index] = task
         tableView.reloadData()
     }

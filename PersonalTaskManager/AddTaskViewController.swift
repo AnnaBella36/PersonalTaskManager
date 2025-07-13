@@ -8,14 +8,14 @@
 import UIKit
 
 protocol AddTaskDelegate: AnyObject{
-    func didAddTask(_ task: Task)
-    func didEditTask(_ task: Task, at index: Int)
+    func didAddTask(_ task: TaskModel)
+    func didEditTask(_ task: TaskModel, at index: Int)
 }
 
-class AddTaskViewController: UIViewController{
+final class AddTaskViewController: UIViewController{
     
     weak var delegate: AddTaskDelegate?
-    var taskToEdit: Task?
+    var taskToEdit: TaskModel?
     var taskIndex: Int?
     
     private let titleTextField: UITextField = {
@@ -77,7 +77,7 @@ class AddTaskViewController: UIViewController{
         let selectedPriority = TaskPriority.allCases[priorityControl.selectedSegmentIndex]
         let selectedCategory = TaskCategory.allCases[categoryControl.selectedSegmentIndex]
         
-        let task = Task(title: title, isCompleted: taskToEdit?.isCompleted ?? false , priority: selectedPriority, category: selectedCategory)
+        let task = TaskModel(title: title, isCompleted: taskToEdit?.isCompleted ?? false , priority: selectedPriority, category: selectedCategory)
         
         if let index = taskIndex{
             delegate?.didEditTask(task, at: index)
