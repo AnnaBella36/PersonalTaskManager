@@ -19,15 +19,36 @@ final class TaskListViewController:  UIViewController{
         return table
     }()
     
+    private let emptyStateView = EmptyStateView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "My Tasks"
         view.backgroundColor = .systemBackground
         
+        updateEmptyStateView()
         setupTableView()
         setupNavigationBar()
         setupConstraints()
+        updateEmptyStateVisibility()
         
+    }
+    
+    private func updateEmptyStateVisibility(){
+        let isEmpty = tasks.isEmpty
+        emptyStateView.isHidden = !isEmpty
+        tableView.isHidden = isEmpty
+    }
+    
+    private func updateEmptyStateView(){
+        view.addSubview(emptyStateView)
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            emptyStateView.topAnchor.constraint(equalTo: view.topAnchor),
+            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            emptyStateView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
     
     private func setupTableView(){
@@ -78,6 +99,7 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
         let current = completionState[task.id] ?? task.isCompleted
         completionState[task.id] = !current
         tableView.reloadRows(at: [indexPath], with: .automatic)
+        updateEmptyStateVisibility()
         
     }
     
@@ -88,6 +110,7 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
             tasks.remove(at: indexPath.row)
             completionState.removeValue(forKey: id)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            updateEmptyStateVisibility()
         }
     }
     
@@ -106,5 +129,6 @@ extension TaskListViewController: AddTaskDelegate{
             tasks.append(task)
         }
         tableView.reloadData()
+        updateEmptyStateVisibility()
     }
 }
