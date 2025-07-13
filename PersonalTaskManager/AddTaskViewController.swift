@@ -19,7 +19,7 @@ final class AddTaskViewController: UIViewController{
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "enter task"
+        textField.placeholder = "Enter a task title"
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -27,13 +27,11 @@ final class AddTaskViewController: UIViewController{
     
     private let priorityControl: UISegmentedControl = {
         let control = UISegmentedControl(items: TaskPriority.allCases.map{$0.rawValue})
-        control.selectedSegmentIndex = 1
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
     private let categoryControl: UISegmentedControl = {
         let control = UISegmentedControl(items: TaskCategory.allCases.map{$0.rawValue})
-        control.selectedSegmentIndex = 0
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
@@ -41,7 +39,6 @@ final class AddTaskViewController: UIViewController{
     private let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
-        button.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -56,19 +53,30 @@ final class AddTaskViewController: UIViewController{
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = taskToEdit == nil ? "New Task" : "Edit Task"
-        
-        view.addSubview(titleTextField)
-        view.addSubview(priorityControl)
-        view.addSubview(categoryControl)
-        view.addSubview(saveButton)
-        
+      
+        setupUI()
         setConstraints()
+        configureInitialValues()
+     
+    }
+    private func configureInitialValues(){
         
         if let task = taskToEdit{
             titleTextField.text = task.title
             priorityControl.selectedSegmentIndex = TaskPriority.allCases.firstIndex(of: task.priority) ?? 1
             categoryControl.selectedSegmentIndex = TaskCategory.allCases.firstIndex(of: task.category) ?? 0
+        } else {
+            priorityControl.selectedSegmentIndex = 1
+            categoryControl.selectedSegmentIndex = 0
         }
+    }
+    
+    private func setupUI(){
+        view.addSubview(titleTextField)
+        view.addSubview(priorityControl)
+        view.addSubview(categoryControl)
+        view.addSubview(saveButton)
+        saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
     }
     
     @objc func saveTapped(){
@@ -96,19 +104,19 @@ final class AddTaskViewController: UIViewController{
 extension AddTaskViewController{
     func setConstraints(){
         NSLayoutConstraint.activate([
-            titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstraints.verticalSpacing),
+            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
+            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
-            priorityControl.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 20),
-            priorityControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            priorityControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            priorityControl.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
+            priorityControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
+            priorityControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
-            categoryControl.topAnchor.constraint(equalTo: priorityControl.bottomAnchor, constant: 20),
-            categoryControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            categoryControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            categoryControl.topAnchor.constraint(equalTo: priorityControl.bottomAnchor, constant: LayoutConstraints.verticalSpacing),
+            categoryControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstraints.horizontalPadding),
+            categoryControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.horizontalPadding),
             
-            saveButton.topAnchor.constraint(equalTo: categoryControl.bottomAnchor, constant: 30),
+            saveButton.topAnchor.constraint(equalTo: categoryControl.bottomAnchor, constant: LayoutConstraints.bottomSpacing),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
