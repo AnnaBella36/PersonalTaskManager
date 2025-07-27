@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 final class TaskListViewController:  UIViewController{
     
@@ -30,6 +31,7 @@ final class TaskListViewController:  UIViewController{
         setupTableView()
         setupNavigationBar()
         setupConstraints()
+        loadTasksFromCoreDat()
         updateEmptyStateVisibility()
         
     }
@@ -64,6 +66,62 @@ final class TaskListViewController:  UIViewController{
     @objc private func addTaskTapped(){
         let addVC = AddTaskViewController(delegate: self)
         navigationController?.pushViewController(addVC, animated: true)
+    }
+    
+    private func loadTasksFromCoreDat() {
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        do{
+            let results = try CoreDataManager.shared.context.fetch(fetchRequest)
+            tasks =  results.compactMap{entity in
+                guard let title = entity.title,
+                      let id = entity.id,
+                      let priorityRaw = entity.priority,
+                      let categoryRaw = entity.category,
+                      let priority = TaskPriority(rawValue: priorityRaw),
+                      let category = TaskCategory(rawValue: categoryRaw) else {
+                    return nil }
+                
+                return TaskModel(id: id,
+                                 title: title,
+                                 description: entity.taskDescription ?? "",
+                                 isCompleted: entity.isCompleted,
+                                 priority: priority,
+                                 category: category)
+            }
+        } catch {
+            print("Error load - \(error)")
+        }
+    }
+    
+    private func saveTaskCoreData(_ task: TaskModel) {
+        let context = CoreDataManager.shared.context
+        let entity = TaskEntity(context: context)
+        entity.id = task.id
+        entity.title = task.title
+        entity.taskDescription = task.description
+        entity.isCompleted = task.isCompleted
+        entity.priority = task.priority.rawValue
+        entity.category = task.category.rawValue
+        CoreDataManager.shared.saveContext()
+    }
+    
+    private func updateTaskInCoreData(_ task: TaskModel) {
+        let context = CoreDataManager.shared.context
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
+        
+        do {
+            if let entity = try context.fetch(fetchRequest).first{
+                entity.title = task.title
+                entity.taskDescription = task.description
+                entity.isCompleted = task.isCompleted
+                entity.priority = task.priority.rawValue
+                entity.category = task.category.rawValue
+                CoreDataManager.shared.saveContext()
+            }
+        } catch {
+            printContent("Еask update erro: \(error)")
+        }
     }
 }
 
@@ -125,8 +183,10 @@ extension TaskListViewController: AddTaskDelegate{
     func didSaveTask(_ task: TaskModel) {
         if let index = tasks.firstIndex(where: {$0.id == task.id}){
             tasks[index] = task
+            updateTaskInCoreData(task)
         } else {
             tasks.append(task)
+            saveTaskCoreData(task)
         }
         tableView.reloadData()
         updateEmptyStateVisibility()
