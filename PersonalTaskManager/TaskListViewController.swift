@@ -20,6 +20,13 @@ final class TaskListViewController:  UIViewController{
         return table
     }()
     
+    private let categorySegmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["All"] + TaskCategory.allCases.map{$0.rawValue})
+        return control
+    }()
+    
+    private var sortByPriority: Bool = false
+    
     private let emptyStateView = EmptyStateView()
     
     override func viewDidLoad() {
@@ -28,21 +35,22 @@ final class TaskListViewController:  UIViewController{
         view.backgroundColor = .systemBackground
         
         updateEmptyStateView()
+        setupCategoryControl()
         setupTableView()
         setupNavigationBar()
         setupConstraints()
-        loadTasksFromCoreDat()
+        loadTasksFromCoreData()
         updateEmptyStateVisibility()
         
     }
     
-    private func updateEmptyStateVisibility(){
+    private func updateEmptyStateVisibility() {
         let isEmpty = tasks.isEmpty
         emptyStateView.isHidden = !isEmpty
         tableView.isHidden = isEmpty
     }
     
-    private func updateEmptyStateView(){
+    private func updateEmptyStateView() {
         view.addSubview(emptyStateView)
         emptyStateView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -53,24 +61,52 @@ final class TaskListViewController:  UIViewController{
         ])
     }
     
-    private func setupTableView(){
+    private func setupTableView() {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
     }
     
-    private func setupNavigationBar(){
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTaskTapped))
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(toggleSort)),
+       UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTaskTapped))]
     }
     
-    @objc private func addTaskTapped(){
+    @objc private func addTaskTapped() {
         let addVC = AddTaskViewController(delegate: self)
         navigationController?.pushViewController(addVC, animated: true)
     }
     
-    private func loadTasksFromCoreDat() {
+    @objc func toggleSort() {
+        sortByPriority.toggle()
+        loadTasksFromCoreData()
+    }
+    
+    private func setupCategoryControl() {
+        view.addSubview(categorySegmentedControl)
+        categorySegmentedControl.selectedSegmentIndex = 0
+        categorySegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        categorySegmentedControl.addTarget(self, action: #selector(categoryChanged), for: .valueChanged)
+    }
+    
+    @objc private func categoryChanged() {
+        loadTasksFromCoreData()
+    }
+    
+    private func loadTasksFromCoreData() {
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        do{
+        
+        if categorySegmentedControl.selectedSegmentIndex > 0 {
+            let selectedCategory = TaskCategory.allCases[categorySegmentedControl.selectedSegmentIndex - 1]
+            fetchRequest.predicate = NSPredicate(format: "category == %@", selectedCategory.rawValue)
+        }
+        
+        if sortByPriority {
+            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "priority", ascending: false)]
+        }
+        
+        do {
             let results = try CoreDataManager.shared.context.fetch(fetchRequest)
             tasks =  results.compactMap{entity in
                 guard let title = entity.title,
@@ -88,6 +124,8 @@ final class TaskListViewController:  UIViewController{
                                  priority: priority,
                                  category: category)
             }
+            tableView.reloadData()
+            updateEmptyStateVisibility()
         } catch {
             print("Error load - \(error)")
         }
@@ -128,7 +166,11 @@ final class TaskListViewController:  UIViewController{
 extension TaskListViewController {
     private func setupConstraints(){
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            categorySegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            categorySegmentedControl.leadingAnchor.constraint(equalTo: view
+                .leadingAnchor, constant: 16),
+            categorySegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.topAnchor.constraint(equalTo: categorySegmentedControl.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -153,7 +195,7 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var task = tasks[indexPath.row]
+        let task = tasks[indexPath.row]
         let current = completionState[task.id] ?? task.isCompleted
         completionState[task.id] = !current
         tableView.reloadRows(at: [indexPath], with: .automatic)
