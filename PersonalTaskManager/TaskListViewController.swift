@@ -70,7 +70,7 @@ final class TaskListViewController:  UIViewController{
     private func setupNavigationBar() {
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(toggleSort)),
-       UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTaskTapped))]
+            UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTaskTapped))]
     }
     
     @objc private func addTaskTapped() {
@@ -98,12 +98,9 @@ final class TaskListViewController:  UIViewController{
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
         
         if categorySegmentedControl.selectedSegmentIndex > 0 {
+            //We subtract 1 because the 'All' element is added at the beginning of the segmentedControl, while TaskCategory starts from index 0
             let selectedCategory = TaskCategory.allCases[categorySegmentedControl.selectedSegmentIndex - 1]
             fetchRequest.predicate = NSPredicate(format: "category == %@", selectedCategory.rawValue)
-        }
-        
-        if sortByPriority {
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "priority", ascending: false)]
         }
         
         do {
@@ -124,6 +121,11 @@ final class TaskListViewController:  UIViewController{
                                  priority: priority,
                                  category: category)
             }
+            
+            if sortByPriority {
+                tasks.sort{$0.priority.sortOrder > $1.priority.sortOrder}
+            }
+            
             tableView.reloadData()
             updateEmptyStateVisibility()
         } catch {
@@ -166,10 +168,10 @@ final class TaskListViewController:  UIViewController{
 extension TaskListViewController {
     private func setupConstraints(){
         NSLayoutConstraint.activate([
-            categorySegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            categorySegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstraints.verticalSpacing),
             categorySegmentedControl.leadingAnchor.constraint(equalTo: view
-                .leadingAnchor, constant: 16),
-            categorySegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                .leadingAnchor, constant: LayoutConstraints.cellSideInset),
+            categorySegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstraints.cellSideInset),
             tableView.topAnchor.constraint(equalTo: categorySegmentedControl.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
