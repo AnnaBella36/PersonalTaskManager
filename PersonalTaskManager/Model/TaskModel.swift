@@ -33,3 +33,24 @@ extension TaskModel{
         
     }
 }
+
+extension TaskModel {
+    init?(entity: TaskEntity) {
+        guard let id = entity.id,
+             let title = entity.title,
+              let priorityRaw = entity.priority,
+              let categoryRaw = entity.category,
+              let priority = TaskPriority(rawValue: priorityRaw),
+              let category = TaskCategory(rawValue: categoryRaw) else {
+            return nil
+        }
+              
+        self.id = id
+        self.title = title
+        self.description = entity.taskDescription ?? ""
+        self.isCompleted = entity.isCompleted
+        self.priority = priority
+        self.category = category
+                
+    }
+}

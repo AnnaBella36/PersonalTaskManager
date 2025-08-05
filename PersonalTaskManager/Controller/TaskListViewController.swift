@@ -13,6 +13,10 @@ final class TaskListViewController:  UIViewController{
     private var tasks: [TaskModel] = TaskModel.demoTasks
     private var completionState: [UUID: Bool] = [:]
     
+    private let repository = TaskRepository()
+    
+    private let emptyStateView = EmptyStateView()
+    
     private let tableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
@@ -27,14 +31,12 @@ final class TaskListViewController:  UIViewController{
     
     private var sortByPriority: Bool = false
     
-    private let emptyStateView = EmptyStateView()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "My Tasks"
         view.backgroundColor = .systemBackground
         
-        updateEmptyStateView()
+        setupEmptyStateView()
         setupCategoryControl()
         setupTableView()
         setupNavigationBar()
@@ -45,12 +47,11 @@ final class TaskListViewController:  UIViewController{
     }
     
     private func updateEmptyStateVisibility() {
-        let isEmpty = tasks.isEmpty
-        emptyStateView.isHidden = !isEmpty
-        tableView.isHidden = isEmpty
+        emptyStateView.isHidden = !tasks.isEmpty
+        tableView.isHidden = tasks.isEmpty
     }
     
-    private func updateEmptyStateView() {
+    private func setupEmptyStateView() {
         view.addSubview(emptyStateView)
         emptyStateView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -70,7 +71,7 @@ final class TaskListViewController:  UIViewController{
     private func setupNavigationBar() {
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(toggleSort)),
-       UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTaskTapped))]
+            UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTaskTapped))]
     }
     
     @objc private func addTaskTapped() {
@@ -95,71 +96,12 @@ final class TaskListViewController:  UIViewController{
     }
     
     private func loadTasksFromCoreData() {
-        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
         
-        if categorySegmentedControl.selectedSegmentIndex > 0 {
-            let selectedCategory = TaskCategory.allCases[categorySegmentedControl.selectedSegmentIndex - 1]
-            fetchRequest.predicate = NSPredicate(format: "category == %@", selectedCategory.rawValue)
-        }
-        
-        if sortByPriority {
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "priority", ascending: false)]
-        }
-        
-        do {
-            let results = try CoreDataManager.shared.context.fetch(fetchRequest)
-            tasks =  results.compactMap{entity in
-                guard let title = entity.title,
-                      let id = entity.id,
-                      let priorityRaw = entity.priority,
-                      let categoryRaw = entity.category,
-                      let priority = TaskPriority(rawValue: priorityRaw),
-                      let category = TaskCategory(rawValue: categoryRaw) else {
-                    return nil }
-                
-                return TaskModel(id: id,
-                                 title: title,
-                                 description: entity.taskDescription ?? "",
-                                 isCompleted: entity.isCompleted,
-                                 priority: priority,
-                                 category: category)
-            }
-            tableView.reloadData()
-            updateEmptyStateVisibility()
-        } catch {
-            print("Error load - \(error)")
-        }
-    }
-    
-    private func saveTaskCoreData(_ task: TaskModel) {
-        let context = CoreDataManager.shared.context
-        let entity = TaskEntity(context: context)
-        entity.id = task.id
-        entity.title = task.title
-        entity.taskDescription = task.description
-        entity.isCompleted = task.isCompleted
-        entity.priority = task.priority.rawValue
-        entity.category = task.category.rawValue
-        CoreDataManager.shared.saveContext()
-    }
-    
-    private func updateTaskInCoreData(_ task: TaskModel) {
-        let context = CoreDataManager.shared.context
-        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
-        
-        do {
-            if let entity = try context.fetch(fetchRequest).first{
-                entity.title = task.title
-                entity.taskDescription = task.description
-                entity.isCompleted = task.isCompleted
-                entity.priority = task.priority.rawValue
-                entity.category = task.category.rawValue
-                CoreDataManager.shared.saveContext()
-            }
-        } catch {
-            printContent("Еask update erro: \(error)")
-        }
+        let selectedIndex = categorySegmentedControl.selectedSegmentIndex
+        let selectedCategory: TaskCategory? = selectedIndex > 0 ? TaskCategory.allCases[selectedIndex - 1] : nil
+        tasks = repository.fetchTasks(category: selectedCategory, sortByPriority: sortByPriority)
+        tableView.reloadData()
+        updateEmptyStateVisibility()
     }
 }
 
@@ -206,9 +148,10 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let id = tasks[indexPath.row].id
+            let taskToDelete = tasks[indexPath.row]
             tasks.remove(at: indexPath.row)
-            completionState.removeValue(forKey: id)
+            completionState.removeValue(forKey: taskToDelete.id)
+            repository.delete(taskToDelete)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             updateEmptyStateVisibility()
         }
@@ -225,10 +168,10 @@ extension TaskListViewController: AddTaskDelegate{
     func didSaveTask(_ task: TaskModel) {
         if let index = tasks.firstIndex(where: {$0.id == task.id}){
             tasks[index] = task
-            updateTaskInCoreData(task)
+            repository.update(task)
         } else {
             tasks.append(task)
-            saveTaskCoreData(task)
+            repository.save(task)
         }
         tableView.reloadData()
         updateEmptyStateVisibility()

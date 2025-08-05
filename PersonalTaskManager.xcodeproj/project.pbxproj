@@ -14,7 +14,7 @@
 		D897CD292E131DAC003140F8 /* Exceptions for "PersonalTaskManager" folder in "PersonalTaskManager" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = D897CD162E131DA9003140F8 /* PersonalTaskManager */;
 		};
@@ -147,7 +147,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2XBMH23L7F;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PersonalTaskManager/Info.plist;
+				INFOPLIST_FILE = PersonalTaskManager/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -174,7 +174,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2XBMH23L7F;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PersonalTaskManager/Info.plist;
+				INFOPLIST_FILE = PersonalTaskManager/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
