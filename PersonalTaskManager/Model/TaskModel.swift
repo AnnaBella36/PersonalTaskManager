@@ -51,6 +51,5 @@ extension TaskModel {
         self.isCompleted = entity.isCompleted
         self.priority = priority
         self.category = category
-                
     }
 }

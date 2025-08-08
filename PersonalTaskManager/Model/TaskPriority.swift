@@ -12,7 +12,7 @@ enum TaskPriority: String, CaseIterable{
     case medium = "Medium"
     case high = "High"
     
-    var sortOrder: Int{
+    var sortOrder: Int {
         switch self {
         case .low: 0
         case .medium: 1

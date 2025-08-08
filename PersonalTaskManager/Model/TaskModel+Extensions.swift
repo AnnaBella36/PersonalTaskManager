@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 extension Array where Element == TaskModel {
     
     func sortedByPriority() -> [TaskModel] {

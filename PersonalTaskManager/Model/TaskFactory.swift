@@ -13,7 +13,8 @@ struct TaskFactory {
                          description: String?,
                          taskToEdit: TaskModel?,
                          priority: TaskPriority,
-                         category: TaskCategory) -> TaskModel? {
+                         category: TaskCategory
+                         ) -> TaskModel? {
         guard let title = title?.trimmingCharacters(in: .whitespacesAndNewlines), !title.isEmpty else {
             return nil
         }
@@ -26,6 +27,4 @@ struct TaskFactory {
                          priority: priority,
                          category: category)
     }
-    
-    
 }
