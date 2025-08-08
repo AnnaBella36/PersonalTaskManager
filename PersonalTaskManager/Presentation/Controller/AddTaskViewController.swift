@@ -98,28 +98,21 @@ final class AddTaskViewController: UIViewController{
     }
     
     @objc func saveTapped(){
-        guard let title = titleTextField.text, !title.isEmpty else {
-            let alert = UIAlertController(title: "Error", message: "Field should not be empty", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
-            return
-        }
-        
         let selectedPriority = TaskPriority.allCases[priorityControl.selectedSegmentIndex]
         let selectedCategory = TaskCategory.allCases[categoryControl.selectedSegmentIndex]
-        
-        let rawDescription = descriptionTextField.text ?? ""
-        let trimmedDescription = String(rawDescription.prefix(300))
-        let task = TaskModel(id: taskToEdit?.id ?? UUID(),
-                             title: title,
-                             description: trimmedDescription,
-                             isCompleted: taskToEdit?.isCompleted ?? false,
-                             priority: selectedPriority,
-                             category: selectedCategory)
+       
+        guard let task = TaskFactory.makeTask(title: titleTextField.text, description: descriptionTextField.text, taskToEdit: taskToEdit, priority: selectedPriority, category: selectedCategory) else {
+            showErrorAlert()
+            return
+        }
         delegate?.didSaveTask(task)
         navigationController?.popViewController(animated: true)
     }
-    
+    private func showErrorAlert(){
+        let alert = UIAlertController(title: "Error", message: "Title cannot be empty", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
