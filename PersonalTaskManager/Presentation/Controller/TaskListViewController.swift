@@ -95,81 +95,15 @@ final class TaskListViewController:  UIViewController{
         loadTasksFromCoreData()
     }
     
+    //изменить этот метод
     private func loadTasksFromCoreData() {
-        
-<<<<<<< HEAD:PersonalTaskManager/Presentation/Controller/TaskListViewController.swift
         let selectedIndex = categorySegmentedControl.selectedSegmentIndex
-        let selectedCategory: TaskCategory? = selectedIndex > 0 ? TaskCategory.allCases[selectedIndex - 1] : nil
-        tasks = repository.fetchTasks(category: selectedCategory, sortByPriority: sortByPriority)
+        let selectedCategory: TaskCategory? = selectedIndex > 0
+            ? TaskCategory.allCases[selectedIndex - 1] : nil
+
+        tasks = repository.fetchTasks(category: selectedCategory, sortByPriority: sortByPriority) 
         tableView.reloadData()
         updateEmptyStateVisibility()
-=======
-        if categorySegmentedControl.selectedSegmentIndex > 0 {
-            //We subtract 1 because the 'All' element is added at the beginning of the segmentedControl, while TaskCategory starts from index 0
-            let selectedCategory = TaskCategory.allCases[categorySegmentedControl.selectedSegmentIndex - 1]
-            fetchRequest.predicate = NSPredicate(format: "category == %@", selectedCategory.rawValue)
-        }
-        
-        do {
-            let results = try CoreDataManager.shared.context.fetch(fetchRequest)
-            tasks =  results.compactMap{entity in
-                guard let title = entity.title,
-                      let id = entity.id,
-                      let priorityRaw = entity.priority,
-                      let categoryRaw = entity.category,
-                      let priority = TaskPriority(rawValue: priorityRaw),
-                      let category = TaskCategory(rawValue: categoryRaw) else {
-                    return nil }
-                
-                return TaskModel(id: id,
-                                 title: title,
-                                 description: entity.taskDescription ?? "",
-                                 isCompleted: entity.isCompleted,
-                                 priority: priority,
-                                 category: category)
-            }
-            
-            if sortByPriority {
-                tasks.sort{$0.priority.sortOrder > $1.priority.sortOrder}
-            }
-            
-            tableView.reloadData()
-            updateEmptyStateVisibility()
-        } catch {
-            print("Error load - \(error)")
-        }
-    }
-    
-    private func saveTaskCoreData(_ task: TaskModel) {
-        let context = CoreDataManager.shared.context
-        let entity = TaskEntity(context: context)
-        entity.id = task.id
-        entity.title = task.title
-        entity.taskDescription = task.description
-        entity.isCompleted = task.isCompleted
-        entity.priority = task.priority.rawValue
-        entity.category = task.category.rawValue
-        CoreDataManager.shared.saveContext()
-    }
-    
-    private func updateTaskInCoreData(_ task: TaskModel) {
-        let context = CoreDataManager.shared.context
-        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
-        
-        do {
-            if let entity = try context.fetch(fetchRequest).first{
-                entity.title = task.title
-                entity.taskDescription = task.description
-                entity.isCompleted = task.isCompleted
-                entity.priority = task.priority.rawValue
-                entity.category = task.category.rawValue
-                CoreDataManager.shared.saveContext()
-            }
-        } catch {
-            printContent("Еask update erro: \(error)")
-        }
->>>>>>> origin/feature/filter_and_sort:PersonalTaskManager/TaskListViewController.swift
     }
 }
 
