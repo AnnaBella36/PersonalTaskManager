@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TaskPriority: String, CaseIterable{
+enum TaskPriority: String, CaseIterable {
     case low = "Low"
     case medium = "Medium"
     case high = "High"
@@ -16,7 +16,11 @@ enum TaskPriority: String, CaseIterable{
         switch self {
         case .low: 0
         case .medium: 1
+<<<<<<< HEAD:PersonalTaskManager/Model/TaskPriority.swift
         case .high: 2 
+=======
+        case .high: 2
+>>>>>>> origin/feature/filter_and_sort:PersonalTaskManager/TaskPriority.swift
         }
     }
 }
