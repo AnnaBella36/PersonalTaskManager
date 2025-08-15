@@ -95,11 +95,17 @@ final class TaskListViewController:  UIViewController{
         loadTasksFromCoreData()
     }
     
+    //изменить этот метод
     private func loadTasksFromCoreData() {
+<<<<<<< HEAD
         
+=======
+>>>>>>> feature/unit_tests_models
         let selectedIndex = categorySegmentedControl.selectedSegmentIndex
-        let selectedCategory: TaskCategory? = selectedIndex > 0 ? TaskCategory.allCases[selectedIndex - 1] : nil
-        tasks = repository.fetchTasks(category: selectedCategory, sortByPriority: sortByPriority)
+        let selectedCategory: TaskCategory? = selectedIndex > 0
+            ? TaskCategory.allCases[selectedIndex - 1] : nil
+
+        tasks = repository.fetchTasks(category: selectedCategory, sortByPriority: sortByPriority) 
         tableView.reloadData()
         updateEmptyStateVisibility()
     }
