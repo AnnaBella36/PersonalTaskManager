@@ -16,11 +16,7 @@ enum TaskPriority: String, CaseIterable {
         switch self {
         case .low: 0
         case .medium: 1
-<<<<<<< HEAD:PersonalTaskManager/Model/TaskPriority.swift
         case .high: 2 
-=======
-        case .high: 2
->>>>>>> origin/feature/filter_and_sort:PersonalTaskManager/TaskPriority.swift
         }
     }
 }
