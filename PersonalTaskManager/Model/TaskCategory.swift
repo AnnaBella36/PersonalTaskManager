@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TaskCategory: String, CaseIterable{
+enum TaskCategory: String, CaseIterable {
     case personal = "Personal"
     case work = "Work"
     case shopping = "Shopping"

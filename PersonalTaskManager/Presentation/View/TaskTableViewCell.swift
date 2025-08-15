@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TaskTableViewCell: UITableViewCell{
+final class TaskTableViewCell: UITableViewCell {
     
     static let reuseID = "TaskCell"
     

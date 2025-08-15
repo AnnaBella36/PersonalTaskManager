@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-final class TaskListViewController:  UIViewController{
+final class TaskListViewController:  UIViewController {
     
     private var tasks: [TaskModel] = TaskModel.demoTasks
     private var completionState: [UUID: Bool] = [:]
@@ -95,7 +95,7 @@ final class TaskListViewController:  UIViewController{
         loadTasksFromCoreData()
     }
     
-    //изменить этот метод
+    
     private func loadTasksFromCoreData() {
         let selectedIndex = categorySegmentedControl.selectedSegmentIndex
         let selectedCategory: TaskCategory? = selectedIndex > 0
@@ -108,7 +108,7 @@ final class TaskListViewController:  UIViewController{
 }
 
 extension TaskListViewController {
-    private func setupConstraints(){
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             categorySegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstraints.verticalSpacing),
             categorySegmentedControl.leadingAnchor.constraint(equalTo: view
@@ -122,7 +122,7 @@ extension TaskListViewController {
     }
 }
 
-extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
+extension TaskListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tasks.count
     }
@@ -166,7 +166,7 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource{
 }
 
 
-extension TaskListViewController: AddTaskDelegate{
+extension TaskListViewController: AddTaskDelegate {
     func didSaveTask(_ task: TaskModel) {
         if let index = tasks.firstIndex(where: {$0.id == task.id}){
             tasks[index] = task

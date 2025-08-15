@@ -16,11 +16,7 @@ enum TaskPriority: String, CaseIterable {
         switch self {
         case .low: 0
         case .medium: 1
-<<<<<<< HEAD
-        case .high: 2 
-=======
         case .high: 2
->>>>>>> feature/unit_tests_models
-        }
+      }
     }
 }

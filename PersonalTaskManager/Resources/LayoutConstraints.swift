@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum LayoutConstraints{
+enum LayoutConstraints {
     static let horizontalPadding: CGFloat = 20
     static let verticalSpacing: CGFloat = 20
     static let bottomSpacing: CGFloat = 30

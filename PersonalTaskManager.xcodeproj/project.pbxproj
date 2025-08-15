@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		D8EFA73E2E47CE87009AA1CC /* PersonalTaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EFA72B2E47C6FE009AA1CC /* PersonalTaskManagerTests.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		D8EFA7352E47C94F009AA1CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -22,7 +18,6 @@
 
 /* Begin PBXFileReference section */
 		D897CD172E131DA9003140F8 /* PersonalTaskManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalTaskManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8EFA72B2E47C6FE009AA1CC /* PersonalTaskManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalTaskManagerTests.swift; sourceTree = "<group>"; };
 		D8EFA7312E47C94F009AA1CC /* PersonalTaskManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PersonalTaskManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -73,7 +68,6 @@
 		D897CD0E2E131DA9003140F8 = {
 			isa = PBXGroup;
 			children = (
-				D8EFA72B2E47C6FE009AA1CC /* PersonalTaskManagerTests.swift */,
 				D897CD192E131DA9003140F8 /* PersonalTaskManager */,
 				D8EFA7322E47C94F009AA1CC /* PersonalTaskManagerTests */,
 				D897CD182E131DA9003140F8 /* Products */,
@@ -206,7 +200,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8EFA73E2E47CE87009AA1CC /* PersonalTaskManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

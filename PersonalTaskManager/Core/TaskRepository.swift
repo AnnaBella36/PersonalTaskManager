@@ -45,7 +45,7 @@ final class TaskRepository {
         CoreDataManager.shared.saveContext()
     }
     
-    func update(_ task: TaskModel){
+    func update(_ task: TaskModel) {
         let request: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
         
@@ -64,7 +64,7 @@ final class TaskRepository {
         }
     }
     
-    func delete(_ task: TaskModel){
+    func delete(_ task: TaskModel) {
         let request: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
         

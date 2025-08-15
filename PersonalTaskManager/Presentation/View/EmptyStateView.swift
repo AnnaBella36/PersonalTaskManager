@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class EmptyStateView: UIView{
+final class EmptyStateView: UIView {
     
     private let messageLabel: UILabel = {
         let label = UILabel()

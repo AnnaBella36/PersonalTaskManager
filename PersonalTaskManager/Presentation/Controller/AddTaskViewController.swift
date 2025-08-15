@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol AddTaskDelegate: AnyObject{
+protocol AddTaskDelegate: AnyObject {
     func didSaveTask(_ task: TaskModel)
 }
 
-final class AddTaskViewController: UIViewController{
+final class AddTaskViewController: UIViewController {
     
     weak var delegate: AddTaskDelegate?
     private let taskToEdit: TaskModel?
@@ -56,7 +56,7 @@ final class AddTaskViewController: UIViewController{
         return button
     }()
     
-    init(taskToEdit: TaskModel? = nil, delegate: AddTaskDelegate?){
+    init(taskToEdit: TaskModel? = nil, delegate: AddTaskDelegate?) {
         self.taskToEdit = taskToEdit
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
@@ -72,9 +72,9 @@ final class AddTaskViewController: UIViewController{
         configureInitialValues()
      
     }
-    private func configureInitialValues(){
+    private func configureInitialValues() {
         
-        if let task = taskToEdit{
+        if let task = taskToEdit {
             titleTextField.text = task.title
             descriptionTextField.text = task.description
             priorityControl.selectedSegmentIndex = TaskPriority.allCases.firstIndex(of: task.priority) ?? 1
@@ -85,7 +85,7 @@ final class AddTaskViewController: UIViewController{
         }
     }
     
-    private func setupUI(){
+    private func setupUI() {
         view.addSubview(titleTextField)
         view.addSubview(descriptionTextField)
         view.addSubview(priorityControl)
@@ -97,7 +97,7 @@ final class AddTaskViewController: UIViewController{
         saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
     }
     
-    @objc func saveTapped(){
+    @objc func saveTapped() {
         let selectedPriority = TaskPriority.allCases[priorityControl.selectedSegmentIndex]
         let selectedCategory = TaskCategory.allCases[categoryControl.selectedSegmentIndex]
        
@@ -120,7 +120,7 @@ final class AddTaskViewController: UIViewController{
     
 }
 
-extension AddTaskViewController{
+extension AddTaskViewController {
     func setConstraints(){
         NSLayoutConstraint.activate([
             titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstraints.verticalSpacing),
