@@ -97,10 +97,6 @@ final class TaskListViewController:  UIViewController{
     
     //изменить этот метод
     private func loadTasksFromCoreData() {
-<<<<<<< HEAD
-        
-=======
->>>>>>> feature/unit_tests_models
         let selectedIndex = categorySegmentedControl.selectedSegmentIndex
         let selectedCategory: TaskCategory? = selectedIndex > 0
             ? TaskCategory.allCases[selectedIndex - 1] : nil
